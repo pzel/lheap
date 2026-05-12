@@ -4,7 +4,7 @@ defmodule LHeap.Mixfile do
   def project do
     [
       app: :lheap,
-      version: "1.0.0",
+      version: "2.0.0",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -15,13 +15,14 @@ defmodule LHeap.Mixfile do
   end
 
   def application do
-    [extra_applications: [:logger]]
+    []
+    # [extra_applications: [:logger]]
   end
 
   defp deps do
     [
       {:stream_data, "~> 1.3.0", only: :test},
-      {:ex_doc, "~> 0.15.0", only: :dev},
+      {:ex_doc, "~> 0.40.0", only: :dev},
     ]
   end
 
@@ -33,9 +34,9 @@ defmodule LHeap.Mixfile do
 
   defp package do
     [
-      maintainers: ["sotojuan"],
+      maintainers: ["pzel"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/sotojuan/lheap"}
+      links: %{"GitHub" => "https://github.com/pzel/lheap"}
     ]
   end
 end

@@ -2,6 +2,13 @@ defmodule LHeap do
   @moduledoc """
   Leftist heaps in Elixir.
 
+  This version requires that values be 2-tuples ({a,b}), where:
+    * `a` is used to determine the position of the node in the heap
+    * `b` is carried along as associated data
+
+  Values with duplicate index `a` are overwritten on `put` and `merge`, where
+  `merge` prefers its second argument.
+
   For general information about them, see [Wikipedia](https://en.wikipedia.org/wiki/Leftist_tree).
 
   Leftist heap elements are represented by a three element tuple of the form:
@@ -33,8 +40,9 @@ defmodule LHeap do
 
   ## Example
 
-      iex> LHeap.new([4, 3, 8])
-      {{2, 3}, {{1, 4}, {}, {}}, {{1, 8}, {}, {}}}
+      iex> LHeap.new([{4, :four}, {3, :three}, {8, :eight}])
+      {{2, {3, :three}}, {{1, {4, :four}}, {}, {}}, {{1, {8, :eight}}, {}, {}}}
+
   """
   def new(enumerable) do
     enumerable
@@ -42,24 +50,27 @@ defmodule LHeap do
   end
 
   @doc """
-  Puts a new value in a heap.
+  Puts a new value in a heap, replacing the old value if present.
 
   ## Example
 
-      iex> LHeap.new() |> LHeap.put(10) |> LHeap.put(1) |> LHeap.put(5) |> LHeap.put(7)
-      {{2, 1}, {{1, 10}, {}, {}}, {{1, 5}, {{1, 7}, {}, {}}, {}}}
+      iex> LHeap.new() |> LHeap.put({10, :ten}) |> LHeap.put({1, :one}) |> LHeap.put({5, :five})
+      {{2, {1, :one}}, {{1, {10, :ten}}, {}, {}}, {{1, {5, :five}}, {}, {}}}
+      iex> LHeap.new() |> LHeap.put({10, :ten}) |> LHeap.put({10, TEN})
+      {{1, {10, TEN}}, {}, {}}
+
+
   """
-  def put(lheap, value) do
-    merge(build(value), lheap)
-  end
+  def put(lheap, {_, _} = value), do: merge(lheap, build(value))
+  def put(_, value), do: raise(ArgumentError, "Expected tuple {idx, val}, got: #{inspect(value)}")
 
   @doc """
   Returns the minimum element of a heap.
 
   ## Example
 
-      iex> LHeap.new([10, 1, 7]) |> LHeap.min()
-      1
+      iex> LHeap.new([{10, :ten}, {1, :one}, {7, :seven}]) |> LHeap.min()
+      {1, :one}
   """
   def min(@empty), do: nil
   def min({{_, value}, _, _}), do: value
@@ -69,8 +80,9 @@ defmodule LHeap do
 
   ## Example
 
-      iex> LHeap.new([10, 1, 7]) |> LHeap.remove_min()
-      {{1, 7}, {{1, 10}, {}, {}}, {}}
+      iex> LHeap.new([{10, :ten}, {1, :one}, {7, :seven}]) |> LHeap.remove_min()
+      {{1, {7, :seven}}, {{1, {10, :ten}}, {}, {}}, {}}
+
   """
   def remove_min(@empty), do: nil
   def remove_min({_, l, r}), do: merge(l, r)
@@ -80,19 +92,27 @@ defmodule LHeap do
 
   ## Example
 
-      iex> heap1 = LHeap.new([2, 4, 6])
-      iex> heap2 = LHeap.new([1, 3, 5])
+      iex> heap1 = LHeap.new([{2, :two}, {4, :four}, {6, :six}])
+      iex> heap2 = LHeap.new([{1, :one}, {3, :three}, {5, :five}])
       iex> LHeap.merge(heap1, heap2)
-      {{2, 1}, {{2, 2}, {{1, 4}, {}, {}}, {{1, 5}, {{1, 6}, {}, {}}, {}}},
-        {{1, 3}, {}, {}}}
+      {{2, {1, :one}},
+       {{2, {2, :two}}, {{1, {4, :four}}, {}, {}},
+        {{1, {5, :five}}, {{1, {6, :six}}, {}, {}}, {}}}, {{1, {3, :three}}, {}, {}}}
+
   """
   def merge(lheap1, @empty), do: lheap1
   def merge(@empty, lheap2), do: lheap2
 
-  def merge({{_, v1}, left1, right1} = lheap1, {{_, v2}, left2, right2} = lheap2) do
+  def merge(
+        {{_, {k1, _} = v1}, left1, right1} = lheap1,
+        {{_, {k2, _} = v2}, left2, right2} = lheap2
+      ) do
     cond do
-      v1 < v2 ->
+      k1 < k2 ->
         build(v1, left1, merge(right1, lheap2))
+
+      k1 == k2 ->
+        build(v2, left1, merge(right1, remove_min(lheap2)))
 
       true ->
         build(v2, left2, merge(lheap1, right2))
@@ -104,10 +124,22 @@ defmodule LHeap do
 
   ## Example
 
-      iex> heap1 = LHeap.new([2, 4, 6, 8, 10])
-      iex> heap2 = LHeap.new([1, 3, 5, 7, 9])
+      iex> heap1 = LHeap.new([{2, :two}, {4, :four}, {6, :six}, {8, :eight}, {10, :ten}])
+      iex> heap2 = LHeap.new([{1, :one}, {3, :three}, {5, :five}, {7, :seven}, {9, :nine}])
       iex> LHeap.merge(heap1, heap2) |> LHeap.sort()
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      [
+        {1, :one},
+        {2, :two},
+        {3, :three},
+        {4, :four},
+        {5, :five},
+        {6, :six},
+        {7, :seven},
+        {8, :eight},
+        {9, :nine},
+        {10, :ten}
+      ]
+
   """
   def sort(heap), do: sort(heap, [])
   defp sort(@empty, sorted), do: sorted |> Enum.reverse()
