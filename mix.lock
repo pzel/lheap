@@ -1,4 +1,7 @@
-%{"earmark": {:hex, :earmark, "1.2.0", "bf1ce17aea43ab62f6943b97bd6e3dc032ce45d4f787504e3adf738e54b42f3a", [:mix], []},
-  "ex_doc": {:hex, :ex_doc, "0.15.0", "e73333785eef3488cf9144a6e847d3d647e67d02bd6fdac500687854dd5c599f", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, optional: false]}]},
-  "excheck": {:hex, :excheck, "0.5.3", "7326a29cc5fdb6900e66dac205a6a70cc994e2fe037d39136817d7dab13cdabf", [:mix], []},
-  "triq": {:git, "https://github.com/triqng/triq.git", "8dfe582451422839a99efb531dc1f618ced09b33", []}}
+%{
+  "earmark": {:hex, :earmark, "1.2.0", "bf1ce17aea43ab62f6943b97bd6e3dc032ce45d4f787504e3adf738e54b42f3a", [:mix], [], "hexpm", "6709251dd10e70cca0d50be8a25adc38c701b39eac2da3b1c166e3e7e4d358ed"},
+  "ex_doc": {:hex, :ex_doc, "0.15.0", "e73333785eef3488cf9144a6e847d3d647e67d02bd6fdac500687854dd5c599f", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, repo: "hexpm", optional: false]}], "hexpm", "e5ea59f50ecdfe4cc755808450dafe35221d5a0f4a31c42e80a7188eca570e4c"},
+  "excheck": {:hex, :excheck, "0.5.3", "7326a29cc5fdb6900e66dac205a6a70cc994e2fe037d39136817d7dab13cdabf", [:mix], [], "hexpm", "2a27ffeff9d3b2ef45c454efb13990f08bc2578f93fd6d054025da74775ca869"},
+  "stream_data": {:hex, :stream_data, "1.3.0", "bde37905530aff386dea1ddd86ecbf00e6642dc074ceffc10b7d4e41dfd6aac9", [:mix], [], "hexpm", "3cc552e286e817dca43c98044c706eec9318083a1480c52ae2688b08e2936e3c"},
+  "triq": {:git, "https://github.com/triqng/triq.git", "8dfe582451422839a99efb531dc1f618ced09b33", []},
+}

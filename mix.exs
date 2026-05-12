@@ -20,9 +20,8 @@ defmodule LHeap.Mixfile do
 
   defp deps do
     [
-      {:excheck, "~> 0.5", only: :test},
+      {:stream_data, "~> 1.3.0", only: :test},
       {:ex_doc, "~> 0.15.0", only: :dev},
-      {:triq, github: "triqng/triq", only: :test}
     ]
   end
 

@@ -38,7 +38,7 @@ defmodule LHeap do
   """
   def new(enumerable) do
     enumerable
-    |> Enum.reduce(@empty, &(put(&2, &1)))
+    |> Enum.reduce(@empty, &put(&2, &1))
   end
 
   @doc """
@@ -88,10 +88,12 @@ defmodule LHeap do
   """
   def merge(lheap1, @empty), do: lheap1
   def merge(@empty, lheap2), do: lheap2
+
   def merge({{_, v1}, left1, right1} = lheap1, {{_, v2}, left2, right2} = lheap2) do
     cond do
       v1 < v2 ->
         build(v1, left1, merge(right1, lheap2))
+
       true ->
         build(v2, left2, merge(lheap1, right2))
     end
@@ -109,6 +111,7 @@ defmodule LHeap do
   """
   def sort(heap), do: sort(heap, [])
   defp sort(@empty, sorted), do: sorted |> Enum.reverse()
+
   defp sort(heap, sorted) do
     sort(remove_min(heap), [min(heap) | sorted])
   end
@@ -117,10 +120,12 @@ defmodule LHeap do
   defp s_val({{s_val, _}, _, _}), do: s_val
 
   defp build(v), do: build(v, @empty, @empty)
+
   defp build(v, l, r) do
     cond do
       s_val(l) >= s_val(r) ->
         {{s_val(r) + 1, v}, l, r}
+
       true ->
         {{s_val(l) + 1, v}, r, l}
     end
